@@ -106,7 +106,7 @@ exports.delete_inventory = [
       let user = await User.findOne({ _id: req.body._id }).exec();
       if (user.admin) {
         let inventory = await Inventory.deleteOne({
-          _id: req.params.id,
+          _id: req.params._id,
         }).exec();
         res.send({ response: "Item deleted", inventory });
       } else {
