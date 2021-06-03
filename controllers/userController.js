@@ -67,7 +67,7 @@ exports.put_user = [
           }
         );
       }
-      res.send(updatedUser);
+      res.send({ response: "User info updated", user: updatedUser });
     } catch (err) {
       return next(err);
     }

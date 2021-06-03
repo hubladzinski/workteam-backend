@@ -91,7 +91,7 @@ exports.put_inventory = [
             }
           );
         }
-        res.send(updatedInventory);
+        res.send({ response: "Item updated", inventory: updatedInventory });
       } catch (err) {
         return next(err);
       }
@@ -108,10 +108,10 @@ exports.delete_inventory = [
         let inventory = await Inventory.deleteOne({
           _id: req.params.id,
         }).exec();
-        res.send(inventory);
+        res.send({ response: "Item deleted", inventory });
       } else {
         res.send({
-          message: "User without admin permissions",
+          response: "User without admin permissions",
           admin: user.admin,
         });
       }

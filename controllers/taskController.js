@@ -30,37 +30,31 @@ exports.get_task = [
 exports.post_task = [
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
-    if ((await Task.findOne({ title: req.body.title }).exec()) != null) {
-      res.status(400).json({
-        response: "Such task already exists",
+    try {
+      let task = new Task({
+        title: req.body.title,
+        time_start: req.body.time_start,
+        time_end: req.body.time_end,
+        note: req.body.note,
+        users: req.body.users,
+        steps: req.body.steps,
       });
-    } else {
-      try {
-        let task = new Task({
-          title: req.body.title,
-          time_start: req.body.time_start,
-          time_end: req.body.time_end,
-          note: req.body.note,
-          users: req.body.users,
-          steps: req.body.steps,
-        });
 
-        let saveTask = await task.save();
+      let saveTask = await task.save();
 
-        req.body.users.forEach(async (user_id) => {
-          await User.updateOne(
-            { _id: user_id },
-            { $push: { tasks: saveTask._id } }
-          );
-        });
+      req.body.users.forEach(async (user_id) => {
+        await User.updateOne(
+          { _id: user_id },
+          { $push: { tasks: saveTask._id } }
+        );
+      });
 
-        res.status(200).json({
-          response: "Task saved sucessfully",
-          task: saveTask,
-        });
-      } catch (err) {
-        return next(err);
-      }
+      res.status(200).json({
+        response: "Task saved sucessfully",
+        task: saveTask,
+      });
+    } catch (err) {
+      return next(err);
     }
   },
 ];
@@ -77,7 +71,7 @@ exports.put_task = [
           },
         }
       );
-      res.send(updatedTask);
+      res.send({ response: "Task updated", task: updatedTask });
     } catch (err) {
       return next(err);
     }
